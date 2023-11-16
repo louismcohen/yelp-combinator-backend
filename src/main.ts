@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
@@ -10,7 +10,8 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
   });
-
+  app.useGlobalPipes(new ValidationPipe());
+  
   await app.listen(9000);
 }
 bootstrap();

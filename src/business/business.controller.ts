@@ -14,8 +14,7 @@ export class BusinessController {
 
   @Get()
   findAll() {
-    return 'test'
-    // return this.businessService.findAll();
+    return this.businessService.findAll();
   }
 
   @Get(':id')

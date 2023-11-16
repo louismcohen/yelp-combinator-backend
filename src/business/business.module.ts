@@ -5,7 +5,7 @@ import { BusinessController } from './business.controller';
 import { Business, BusinessSchema } from './schemas/business.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Business.name, schema: BusinessSchema }])],
+  imports: [MongooseModule.forFeature([{ name: Business.name, schema: BusinessSchema, collection: 'yelp-businesses' }])],
   controllers: [BusinessController],
   providers: [BusinessService],
 })

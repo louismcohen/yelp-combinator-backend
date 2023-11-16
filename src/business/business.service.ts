@@ -7,7 +7,10 @@ import { UpdateBusinessDto } from './dto/update-business.dto';
 
 @Injectable()
 export class BusinessService {
-  constructor(@InjectModel(Business.name) private businessModel: Model<Business>) {}
+  constructor(
+    @InjectModel(Business.name) 
+    private businessModel: Model<Business>
+  ) {}
 
   create(createBusinessDto: CreateBusinessDto) {
     const createdBusiness = new this.businessModel(createBusinessDto);
