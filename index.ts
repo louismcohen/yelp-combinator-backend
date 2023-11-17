@@ -8,13 +8,15 @@ const app = express();
 
 const PORT: (String | Number) = process.env.PORT || 9000;
 
-const businessRouter = require('./src/business/business.router');
-const collectionRouter = require('./src/collection/collection.router');
+const business = require('./src/business/business.router');
+const collection = require('./src/collection/collection.router');
+const businessDetails = require('./src/yelp-fusion/business-details.router');
 
 app.use(cors());
 app.use(express.json());
-app.use(config.API_BASE_PATH, businessRouter);
-app.use(config.API_BASE_PATH, collectionRouter);
+app.use(config.API_BASE_PATH, business);
+app.use(config.API_BASE_PATH, collection);
+app.use(config.API_BASE_PATH, businessDetails);
 
 const uri: (String | void) = process.env.MONGO_URI;
 mongoose.connect(uri);

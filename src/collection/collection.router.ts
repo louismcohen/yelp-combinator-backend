@@ -1,10 +1,9 @@
-import { Request, Response } from 'express';
-import { Collection } from './collection';
+const CollectionController = require('./collection.controller');
 
-const router = require('express').Router();
+const collectionRouter = require('express').Router();
 
-router.route('/collection/').get((req: Request, res: Response) => {
-  res.send('collection response');
-});
+collectionRouter.route('/collection/:yelp_collection_id').get(CollectionController.getCollectionByYelpCollectionId);
+collectionRouter.route('/collection').get(CollectionController.getAllCollections);
+collectionRouter.route('/collection').post(CollectionController.createCollection);
 
-module.exports = router;
+module.exports = collectionRouter;

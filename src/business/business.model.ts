@@ -1,10 +1,11 @@
+const mongoose = require('mongoose');
 import { Schema } from 'mongoose';
 import { BasicBusiness, Business } from './business';
 
 export const basicBusiness: Schema = new Schema<BasicBusiness>({
   alias: String,
   note: String,
-  added_index: String,
+  added_index: Number,
   yelp_collection_id: String,
 });
 
