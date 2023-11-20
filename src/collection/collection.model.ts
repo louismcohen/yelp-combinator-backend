@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 import { Schema } from 'mongoose';
 import { Collection } from './collection'
-import { basicBusiness } from '../business/business.model';
 
 const collection: Schema = new Schema<Collection>({
   yelp_collection_id: {
@@ -10,7 +9,7 @@ const collection: Schema = new Schema<Collection>({
     unique: false,
     trim: true
   },
-  last_updated: Number,
+  last_updated: String,
   title: String,
   item_count: Number, 
   businesses: [{
@@ -19,7 +18,13 @@ const collection: Schema = new Schema<Collection>({
     added_index: Number,
     yelp_collection_id: String,
   }]
-}, { collection: 'collections'});
+}, { 
+  collection: 'collections',
+  timestamps: {
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+  }
+});
 
 const CollectionModel = mongoose.model('Collection', collection);
 

@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import { Collection } from "./collection";
+const YelpScrapingController = require('../yelp-scraping/yelp-scraping.controller');
 const CollectionModel = require('./collection.model');
 
-const createCollection = async (req: Request, res: Response) => {
+const addCollection = async (req: Request, res: Response) => {
   const newCollection: Collection = req.body;
   
   try {
@@ -15,20 +16,14 @@ const createCollection = async (req: Request, res: Response) => {
 };
 
 const createOrUpdateCollection = async (req: Request, res: Response) => {
-  const collection: Collection = req.body;
+  const yelp_collection_id: string = req.params.yelp_collection_id;
+  const collection = await YelpScrapingController.loadCollectionPageDocumentByYelpCollectionId(yelp_collection_id);
 
   try {
     const savedCollection: Collection = await CollectionModel.findOneAndUpdate(
-      { yelp_collection_id: collection.yelp_collection_id },
+      { yelp_collection_id },
       collection,
       { new: true, upsert: true },
-      (error: any, result: any) => {
-        if (error) {
-          console.error('Error: ', error.response.status);
-        } else {
-          console.log(`Successfully updated ${collection.title}`);
-        }
-      }
     );
 
     res.send(savedCollection);
@@ -64,7 +59,8 @@ const getCollectionByYelpCollectionId = async (req: Request, res: Response) => {
 }
   
   module.exports = {
-    createCollection,
+    addCollection,
+    createOrUpdateCollection,
     getAllCollections,
     getCollectionByYelpCollectionId,
   }
