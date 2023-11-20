@@ -14,6 +14,30 @@ const createCollection = async (req: Request, res: Response) => {
   }
 };
 
+const createOrUpdateCollection = async (req: Request, res: Response) => {
+  const collection: Collection = req.body;
+
+  try {
+    const savedCollection: Collection = await CollectionModel.findOneAndUpdate(
+      { yelp_collection_id: collection.yelp_collection_id },
+      collection,
+      { new: true, upsert: true },
+      (error: any, result: any) => {
+        if (error) {
+          console.error('Error: ', error.response.status);
+        } else {
+          console.log(`Successfully updated ${collection.title}`);
+        }
+      }
+    );
+
+    res.send(savedCollection);
+  } catch (error) {
+    console.error({error});
+    res.send(error);
+  }
+}
+
 const getAllCollections = async (req: Request, res: Response) => {
   try {
     const foundCollections: Collection[] = await CollectionModel.find();

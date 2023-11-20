@@ -3,7 +3,7 @@ import { BasicBusiness } from "../business/business"
 export interface Collection {
   yelp_collection_id: string,
   businesses: BasicBusiness[],
-  items: String[],
+  items?: (Element | Element[]) | undefined,
   created_at: string,
   item_count: number,
   last_updated: string,

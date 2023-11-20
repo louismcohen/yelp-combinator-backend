@@ -1,4 +1,3 @@
-import { BusinessDetails } from "../yelp-fusion/business-details"; 
 import { Collection } from "../collection/collection";
 
 export interface CollectionPage {
