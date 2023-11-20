@@ -1,31 +1,36 @@
-const config = require('./src/config/config');
+import * as config from './src/config/config';
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+  dotenv.config();
+import mongoose from 'mongoose';
 
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
-const mongoose = require('mongoose');
 const app = express();
 
-const PORT: (String | Number) = process.env.PORT || 9000;
+const PORT: (string | number) = process.env.PORT || 9000;
 
-const business = require('./src/business/business.router');
-const collection = require('./src/collection/collection.router');
-const businessDetails = require('./src/yelp-fusion/business-details.router');
-const yelpScraping = require('./src/yelp-scraping/yelp-scraping.router');
+import { businessRouter } from './src/business/business.router';
+import { collectionRouter } from './src/collection/collection.router';
+import { businessDetailsRouter } from './src/yelp-fusion/business-details.router';
+import { yelpScrapingRouter } from './src/yelp-scraping/yelp-scraping.router';
 
 app.use(cors());
 app.use(express.json());
-app.use(config.API_BASE_PATH, business);
-app.use(config.API_BASE_PATH, collection);
-app.use(config.API_BASE_PATH, businessDetails);
-app.use(config.API_BASE_PATH, yelpScraping);
+app.use(config.API_BASE_PATH, businessRouter);
+app.use(config.API_BASE_PATH, collectionRouter);
+app.use(config.API_BASE_PATH, businessDetailsRouter);
+app.use(config.API_BASE_PATH, yelpScrapingRouter);
 
-const uri: (String | void) = process.env.MONGO_URI;
-mongoose.connect(uri);
-const connection = mongoose.connection;
-connection.once('open', () => {
-  console.log('MongoDB database connection established successfully');
-});
+const uri: string | undefined = process.env.MONGO_URI;
+if (uri) {
+  mongoose.connect(uri);
+  const connection = mongoose.connection;
+  connection.once('open', () => {
+    console.log('MongoDB database connection established successfully');
+  });
+} else {
+  console.error(`Invalid Mongo URI: ${uri}`);
+}
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

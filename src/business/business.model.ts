@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 import { Schema } from 'mongoose';
 import { BasicBusiness, Business } from './business';
 
@@ -77,10 +77,5 @@ const business: Schema = new Schema<Business>({
   timestamps: true,
 });
 
-const BasicBusinessModel = mongoose.model('BasicBusiness', basicBusiness);
-const BusinessModel = mongoose.model('Business', business);
-
-module.exports = {
-  BasicBusinessModel,
-  BusinessModel,
-};
+export const BasicBusinessModel = mongoose.model('BasicBusiness', basicBusiness);
+export const BusinessModel = mongoose.model('Business', business);
