@@ -1,10 +1,9 @@
 const jsdom = require('jsdom');
 const axios = require('axios');
-const moment = require('moment-timezone');
 const { YELP_AXIOS_OPTIONS, YELP_RENDERED_ITEMS_URI, YELP_COLLECTION_URI, YELP_TIME_ZONE } = require('../config/config');
 
 import { Request, Response } from "express";
-import { CollectionPage } from "./yelp-scraping";
+import { CollectionPage, ScrapedCollection } from "./yelp-scraping";
 const YelpScrapingService = require('./yelp-scraping.service');
 
 const loadCollectionPageDocument = async (req: Request, res: Response) => {
@@ -18,14 +17,13 @@ const loadCollectionPageDocument = async (req: Request, res: Response) => {
     const collectionPage: CollectionPage = YelpScrapingService.populateCollectionPageDetails(yelp_collection_id, doc);
 
     try {
-      YelpScrapingService.populateRenderedItems(collectionPage);
+      const scrapedCollection: ScrapedCollection = await YelpScrapingService.populateRenderedItems(collectionPage);
       
+      res.send(scrapedCollection);
     } catch (error) {
       console.error({error});
       return error;
     }
-
-    res.send(collectionPage);
 
   } catch (error) {
     console.error({error});

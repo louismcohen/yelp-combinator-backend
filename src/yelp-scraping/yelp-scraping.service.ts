@@ -50,16 +50,15 @@ const populateRenderedItems = async (collectionPage: CollectionPage): Promise<Sc
   let scrapedCollection: ScrapedCollection = {
     ...collectionPage,
     businesses: [],
-    items: [],
     created_at: '',
     updated_at: '',
   };
   
   console.log('populateRenderedItems', scrapedCollection.title);
 
-  let renderedOffset = 0; // ex: 0, 30, 60, 90 ...
-  const offsetStep = 30; // Yelp render limit
-  const maxOffset = scrapedCollection.item_count - 1; // ex: 218
+  let renderedOffset: number  = 0; // ex: 0, 30, 60, 90 ...
+  const offsetStep: number = 30; // Yelp render limit
+  const maxOffset: number = scrapedCollection.item_count - 1; // ex: 218
 
   while (maxOffset - renderedOffset > 0) {
       const response: any = await axios(`${YELP_RENDERED_ITEMS_URI}?collection_id=${scrapedCollection.yelp_collection_id}&offset=${renderedOffset}&sort_by=date`, YELP_AXIOS_OPTIONS);

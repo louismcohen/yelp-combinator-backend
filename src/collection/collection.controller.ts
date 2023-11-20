@@ -45,6 +45,7 @@ const getAllCollections = async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error(error);
+    res.send(error);
   }
 }
 
@@ -57,6 +58,7 @@ const getCollectionByYelpCollectionId = async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error({error});
+    res.send(error);
   }
 
 }

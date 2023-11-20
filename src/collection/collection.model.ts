@@ -13,7 +13,6 @@ const collection: Schema = new Schema<Collection>({
   last_updated: Number,
   title: String,
   item_count: Number, 
-  items: [String],
   businesses: [{
     alias: String,
     note: String,
