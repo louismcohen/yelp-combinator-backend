@@ -20,7 +20,7 @@ const collection: Schema = new Schema<Collection>({
     added_index: Number,
     yelp_collection_id: String,
   }]
-}, { collection: 'yelp-collections'});
+}, { collection: 'collections'});
 
 const CollectionModel = mongoose.model('Collection', collection);
 

@@ -1,13 +1,14 @@
-interface 
+import { BusinessDetails } from "../yelp-fusion/business-details"; 
+import { Collection } from "../collection/collection";
 
 export interface CollectionPage {
   yelp_collection_id: string,
-  doc: Document,
+  doc?: Document,
   item_count: number,
   last_updated: string,
   title: string,
 }
 
-export interface ScrapedCollection extends CollectionPage {
-  // items: 
+export interface ScrapedCollection extends CollectionPage, Collection {
+
 }

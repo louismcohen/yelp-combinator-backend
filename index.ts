@@ -11,12 +11,14 @@ const PORT: (String | Number) = process.env.PORT || 9000;
 const business = require('./src/business/business.router');
 const collection = require('./src/collection/collection.router');
 const businessDetails = require('./src/yelp-fusion/business-details.router');
+const yelpScraping = require('./src/yelp-scraping/yelp-scraping.router');
 
 app.use(cors());
 app.use(express.json());
 app.use(config.API_BASE_PATH, business);
 app.use(config.API_BASE_PATH, collection);
 app.use(config.API_BASE_PATH, businessDetails);
+app.use(config.API_BASE_PATH, yelpScraping);
 
 const uri: (String | void) = process.env.MONGO_URI;
 mongoose.connect(uri);

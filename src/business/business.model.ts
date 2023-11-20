@@ -73,7 +73,8 @@ const business: Schema = new Schema<Business>({
   visited: Boolean,
   website: String,
 }, {
-  timestamps: true
+  collection: 'businesses',
+  timestamps: true,
 });
 
 const BasicBusinessModel = mongoose.model('BasicBusiness', basicBusiness);
