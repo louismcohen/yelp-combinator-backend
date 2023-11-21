@@ -4,7 +4,6 @@ import { YelpFusionError } from './yelp-fusion-error';
 
 class ErrorHandler {
   routeErrorHandler = (error: any, req: Request, res: Response, next: NextFunction) => {
-    console.log({error});
     if (error.type === 'noBusinessAlias') {
       res.status(400).send({
         message: 'No business alias provided',
@@ -27,11 +26,6 @@ class ErrorHandler {
         res.send(error);
       }
     }    
-  }
-
-  HTTP_ERROR_MESSAGES = {
-    noBusinessAlias: `No business alias provided`,
-    noYelpCollectionId: `No Yelp Collection ID provided`,
   }
 }
 

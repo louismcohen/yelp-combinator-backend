@@ -9,12 +9,8 @@ class CollectionController {
     const yelp_collection_id: string = req.params.yelp_collection_id;
   
     try {
-      if (!yelp_collection_id) {
-        res.status(400).send(ErrorHandler.HTTP_ERROR_MESSAGES.noYelpCollectionId);
-      } else {
-        const savedCollection: Collection = await CollectionService.createOrUpdateCollection(yelp_collection_id);
-        res.send(savedCollection);
-      }
+      const savedCollection: Collection = await CollectionService.createOrUpdateCollection(yelp_collection_id);
+      res.send(savedCollection);
     } catch (error) {
       next(error);
     }
