@@ -7,6 +7,7 @@ class ErrorHandler {
 
   HTTP_ERROR_MESSAGES = {
     noBusinessAlias: `No business alias provided`,
+    noYelpCollectionId: `No Yelp Collection ID provided`,
   }
 }
 
