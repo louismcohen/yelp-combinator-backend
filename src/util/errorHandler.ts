@@ -3,6 +3,11 @@ import { YELP_BIZ_API_URI } from '../config/config';
 import { YelpFusionError } from './yelp-fusion-error';
 
 class ErrorHandler {
+  logger = (error: any, req: Request, res: Response, next: NextFunction) => {
+    console.error({error});
+    next(error);
+  }
+
   routeErrorHandler = (error: any, req: Request, res: Response, next: NextFunction) => {
     if (error.type === 'noBusinessAlias') {
       res.status(400).send({

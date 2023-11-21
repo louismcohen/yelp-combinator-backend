@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { Collection } from "./collection";
-import { CollectionModel } from './collection.model';
 import CollectionService from './collection.service';
-import ErrorHandler from '../util/errorHandler';
 
 class CollectionController {
   createOrUpdateCollection = async (req: Request, res: Response, next: NextFunction) => {
