@@ -1,39 +1,23 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { BusinessDetails } from "./business-details";
-import { YELP_AXIOS_OPTIONS } from '../config/config';
 
-import * as config from '../config/config'
-import axios, { AxiosResponse } from 'axios';
-import Bottleneck from 'bottleneck';
 import { BasicBusiness } from '../business/business';
+import BusinessDetailsService from './business-details.service';
 
 class BusinessDetailsController {
-  private limiter = new Bottleneck({
-    maxConcurrent: 5,
-    minTime: 333,
-  })
-
-  getBusinessDetailsByAlias = async (req: Request, res: Response) => {
+  getBusinessDetailsByAlias = async (req: Request, res: Response, next: NextFunction) => {
     const alias: string = req.params.alias;
-    const businessDetails = await this.limiter.schedule(() => this.getBusinessDetails(alias));
-
-    res.send(businessDetails);
-  }
-
-  getBusinessDetails = async (alias: string) => {
     try {
-      const businessDetailsResponse: AxiosResponse = await axios(`${config.YELP_BIZ_API_URI}${encodeURI(alias)}`, YELP_AXIOS_OPTIONS);
-      const businessDetails: BusinessDetails = businessDetailsResponse.data;
+      const businessDetails: BusinessDetails = await BusinessDetailsService.getBusinessDetailsByAlias(alias);
+      res.send(businessDetails);
 
-      return businessDetails;
-  
     } catch (error) {
-      console.error({error});
-      return error;
+      next(error);
     }
   }
 
-  getManyBusinessDetailsByAlias = async (req: Request, res: Response) => {
+
+  getManyBusinessDetailsByAlias = async (req: Request, res: Response, next: NextFunction) => {
     const businesses: BasicBusiness[] = req.body.businesses;
     const aliases: string[] = businesses
       .filter((business) => !!business.alias)
@@ -46,7 +30,7 @@ class BusinessDetailsController {
 
   getManyBusinessDetails = async (aliases: string[]): Promise<unknown[]> => {
     const businessDetails = Promise.all(aliases.map(alias => {
-      return this.limiter.schedule(() => this.getBusinessDetails(alias));
+      // return this.limiter.schedule(() => this.getBusinessDetails(alias));
     }))
 
     return businessDetails;

@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { Collection } from "./collection";
 import { CollectionModel } from './collection.model';
 import CollectionService from './collection.service';
 import ErrorHandler from '../util/errorHandler';
 
 class CollectionController {
-  createOrUpdateCollection = async (req: Request, res: Response) => {
+  createOrUpdateCollection = async (req: Request, res: Response, next: NextFunction) => {
     const yelp_collection_id: string = req.params.yelp_collection_id;
   
     try {
@@ -16,23 +16,21 @@ class CollectionController {
         res.send(savedCollection);
       }
     } catch (error) {
-      console.error({error});
-      res.send(error);
+      next(error);
     }
   }
   
-  getAllCollections = async (req: Request, res: Response) => {
+  getAllCollections = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const foundCollections: Collection[] | null = await CollectionService.getAllCollections();
       res.send(foundCollections);
   
     } catch (error) {
-      console.error(error);
-      res.send(error);
+      next(error);
     }
   }
   
-  getCollectionByYelpCollectionId = async (req: Request, res: Response) => {
+  getCollectionByYelpCollectionId = async (req: Request, res: Response, next: NextFunction) => {
     const yelp_collection_id: string = req.params.yelp_collection_id;
   
     try {
@@ -40,8 +38,7 @@ class CollectionController {
       res.send(foundCollection);
   
     } catch (error) {
-      console.error({error});
-      res.send(error);
+      next(error);
     }
   
   }

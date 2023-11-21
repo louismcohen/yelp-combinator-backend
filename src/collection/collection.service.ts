@@ -2,7 +2,6 @@ import YelpScrapingService from "../yelp-scraping/yelp-scraping.service";
 import { Collection } from "./collection";
 import { CollectionModel } from "./collection.model";
 
-
 class CollectionService {
   createOrUpdateCollection = async (yelp_collection_id: string): Promise<Collection> => {
     const collection = await YelpScrapingService.loadCollectionPageDocument(yelp_collection_id);
