@@ -2,11 +2,12 @@ import { Request, Response } from 'express';
 import { Collection } from "./collection";
 import YelpScrapingController from '../yelp-scraping/yelp-scraping.controller';
 import { CollectionModel } from './collection.model';
+import yelpScrapingService from '../yelp-scraping/yelp-scraping.service';
 
 class CollectionController {
   createOrUpdateCollection = async (req: Request, res: Response) => {
     const yelp_collection_id: string = req.params.yelp_collection_id;
-    const collection = await YelpScrapingController.loadCollectionPageDocumentByYelpCollectionId(yelp_collection_id);
+    const collection = await yelpScrapingService.loadCollectionPageDocument(yelp_collection_id);
   
     try {
       const savedCollection: Collection = await CollectionModel.findOneAndUpdate(

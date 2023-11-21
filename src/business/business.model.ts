@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { Schema } from 'mongoose';
 import { BasicBusiness, Business } from './business';
 
-export const basicBusiness: Schema = new Schema<BasicBusiness>({
+const basicBusiness: Schema = new Schema<BasicBusiness>({
   alias: String,
   note: String,
   added_index: Number,
@@ -14,6 +14,7 @@ const business: Schema = new Schema<Business>({
   alias: {
     type: String,
     unique: true,
+    required: true,
   },
   name: String,
   image_url: String,

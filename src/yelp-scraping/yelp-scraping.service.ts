@@ -2,12 +2,30 @@ import jsdom from 'jsdom';
 import axios from 'axios';
 import moment from 'moment-timezone';
 
-import { YELP_AXIOS_OPTIONS, YELP_RENDERED_ITEMS_URI, YELP_TIME_ZONE } from '../config/config'
+import { YELP_AXIOS_OPTIONS, YELP_COLLECTION_URI, YELP_RENDERED_ITEMS_URI, YELP_TIME_ZONE } from '../config/config'
 
 import { BasicBusiness } from '../business/business';
 import { CollectionPage, ScrapedCollection } from './yelp-scraping';
 
 class YelpScrapingService {
+  loadCollectionPageDocument = async (yelp_collection_id: string): Promise<ScrapedCollection> => {
+    try {
+      const response: any = await axios.get(`${YELP_COLLECTION_URI}${yelp_collection_id}`, YELP_AXIOS_OPTIONS);
+      const dom = new jsdom.JSDOM(response.data); 
+  
+      const doc: Document = dom.window.document;
+      const collectionPage: CollectionPage = this.populateCollectionPageDetails(yelp_collection_id, doc);
+  
+      const scrapedCollection = await this.populateRenderedItems(collectionPage);
+  
+      return scrapedCollection;
+  
+    } catch (error) {
+      console.error({error});
+      throw error;
+    }
+  }
+
   populateCollectionPageDetails = (yelp_collection_id: string, doc: Document): CollectionPage => {
     let collection: CollectionPage = {
       yelp_collection_id,
