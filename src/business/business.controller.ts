@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { Business } from './business';
 import BusinessService from './business.service';
-import ErrorHandler from '../util/errorHandler';
 
 class BusinessController {
   getBusinessByAlias = async (req: Request, res: Response, next: NextFunction): Promise<Business | any> => {

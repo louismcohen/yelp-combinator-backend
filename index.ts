@@ -16,7 +16,7 @@ import { businessRouter } from './src/business/business.router';
 import { collectionRouter } from './src/collection/collection.router';
 import { businessDetailsRouter } from './src/yelp-fusion/business-details.router';
 import { yelpScrapingRouter } from './src/yelp-scraping/yelp-scraping.router';
-import ErrorHandler from './src/util/errorHandler';
+import ErrorHandler from './src/util/error-handler';
 
 Sentry.init({
   dsn: 'https://ac28fc0beef9caa30425faf6996647b5@o1208538.ingest.sentry.io/4506262460366848',
