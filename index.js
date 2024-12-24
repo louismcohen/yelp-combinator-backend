@@ -19,12 +19,12 @@ const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
-app.use('/api/', yelpParsedCollectionsRouter);
-app.use('/api/', yelpCollectionRouter);
-app.use('/api/', yelpBusinessRouter);
-app.use('/api/', yelpRouter);
-app.use('/api/', googleRouter);
-app.use('/api/', geolocationRouter);
+app.use('/v1/', yelpParsedCollectionsRouter);
+app.use('/v1/', yelpCollectionRouter);
+app.use('/v1/', yelpBusinessRouter);
+app.use('/v1/', yelpRouter);
+app.use('/v1/', googleRouter);
+app.use('/v1/', geolocationRouter);
 
 const uri = process.env.ATLAS_URI;
 mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
