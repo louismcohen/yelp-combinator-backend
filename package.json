@@ -1,0 +1,45 @@
+{
+    "name": "yelp-combinator",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon --trace-warnings index.js",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false cd frontend && npm install && npm run build"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/louismcohen/yelp-collections.git"
+    },
+    "author": "Louis Cohen",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/louismcohen/yelp-collections/issues"
+    },
+    "homepage": "https://github.com/louismcohen/yelp-collections#readme",
+    "dependencies": {
+        "@sentry/browser": "^7.29.0",
+        "@sentry/integrations": "^7.29.0",
+        "@sentry/node": "^7.0.0",
+        "@sentry/tracing": "^7.0.0",
+        "axios": "^0.27.2",
+        "bottleneck": "^2.19.5",
+        "cheerio": "^1.0.0-rc.11",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.1",
+        "express": "^4.18.1",
+        "jsdom": "^19.0.0",
+        "lodash": "^4.17.21",
+        "moment-timezone": "^0.5.34",
+        "mongodb": "^4.6.0",
+        "mongoose": "^6.3.5"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.16"
+    },
+    "engines": {
+        "node": ">=14.0"
+    }
+}
