@@ -1,6 +1,6 @@
 const YelpParsedCollection = require('../models/yelp-parsed-collection.model');
 const YelpCollection = require('../models/yelp-collection.model');
-const YelpBusiness = require('../models/yelp-business.model');
+import YelpBusiness from '../models/yelp-business.model';
 const jsdom = require('jsdom');
 const axios = require('axios');
 const {yelpAxiosOptions} = require('../config/yelp-connection.config');

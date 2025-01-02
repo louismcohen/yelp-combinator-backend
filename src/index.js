@@ -11,6 +11,7 @@ const yelpBusinessRouter = require('./routes/yelp-business');
 const yelpRouter = require('./routes/yelp.router');
 const googleRouter = require('./routes/google.router');
 const geolocationRouter = require('./routes/geolocation.router');
+const aiSearchRouter = require('./routes/ai-search.router').default;
 
 const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
@@ -25,6 +26,7 @@ app.use('/v1/', yelpBusinessRouter);
 app.use('/v1/', yelpRouter);
 app.use('/v1/', googleRouter);
 app.use('/v1/', geolocationRouter);
+app.use('/v1/', aiSearchRouter);
 
 const uri = process.env.ATLAS_URI;
 mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});

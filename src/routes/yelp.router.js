@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const YelpController = require('../controllers/yelp.controller');
-const businesses = require('../businesses.json');
+// const businesses = require('../businesses.json');
 
 router.route('/').all(YelpController.initialLoad);
 // router.route('/').get((request, response) => {

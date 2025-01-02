@@ -1,8 +1,8 @@
-const YelpBusiness = require('../models/yelp-business.model');
-const axios = require('axios');
-const YelpBusinessService = require('../services/yelp-business.service');
-const Bottleneck = require('bottleneck');
-const { request } = require('express');
+import { findOneAndUpdate } from '../models/yelp-business.model';
+import axios from 'axios';
+import { getYelpBusinessInfo, updateBusinessByAlias, updatedSavedBusiness, getAllBusinesses, getBusinessByAlias, updateAllBusinesses, updateIncompleteBusinesses, updateAllBusinessesBasicInfo, deleteAllBusinesses } from '../services/yelp-business.service';
+import Bottleneck from 'bottleneck';
+import { request } from 'express';
 
 const maxIndex = -1;
 const delay = 1000;
@@ -16,8 +16,8 @@ const updateAllIncompleteBusinesses = async (request, response, next) => {
   businesses.filter(x => !x.name).map(async business => {
     console.log(business);
     try {
-      const data = await limiter.schedule(() => YelpBusinessService.getYelpBusinessInfo(business.alias));
-      YelpBusiness.findOneAndUpdate(
+      const data = await limiter.schedule(() => getYelpBusinessInfo(business.alias));
+      findOneAndUpdate(
         {alias: business.alias},
         data,
         {new: true, upsert: true},
@@ -39,25 +39,25 @@ const updateAllIncompleteBusinesses = async (request, response, next) => {
 
 const addOrUpdateBusinessByAlias = async (request, response) => {
   const alias = request.query.alias;
-  const updated = await YelpBusinessService.updateBusinessByAlias(alias);
+  const updated = await updateBusinessByAlias(alias);
   response.json(updated);
 }
 
 const updatedSaved = async (request, response) => {
   const data = request.body;
-  const updated = await YelpBusinessService.updatedSavedBusiness(data);
+  const updated = await updatedSavedBusiness(data);
   response.json(updated);
 }
 
 const getAll = async (request, response) => {
-  const businesses = await YelpBusinessService.getAllBusinesses();
+  const businesses = await getAllBusinesses();
   businesses ?
     response.json(businesses) :
     response.status(400).json(`Error getting all businesses`);          
 }
 
 const getByAlias = async (request, response) => {
-  const business = await YelpBusinessService.getBusinessByAlias(request.query.alias);
+  const business = await getBusinessByAlias(request.query.alias);
   business ?
     response.json(business) :
     response.status(400).json(`Error getting business with alias ${request.query.alias}`);
@@ -65,7 +65,7 @@ const getByAlias = async (request, response) => {
 
 const updateAll = async (request, response) => {
   try {
-    const allBusinesses = await YelpBusinessService.updateAllBusinesses();
+    const allBusinesses = await updateAllBusinesses();
     response.json(allBusinesses);
   } catch (error) {
     response.status(400).json(`Error updating all businesses\n${error}`);
@@ -73,7 +73,7 @@ const updateAll = async (request, response) => {
 }
 
 const updateIncomplete = async (request, response) => {
-  const updated = await YelpBusinessService.updateIncompleteBusinesses();
+  const updated = await updateIncompleteBusinesses();
   updated ?
     response.json(updated) :
     response.status(400).json(`Error updated incomplete businesses`);
@@ -81,7 +81,7 @@ const updateIncomplete = async (request, response) => {
 
 const updateAllBasicInfo = async (request, response) => {
   try {
-    const updatedBusinesses = await YelpBusinessService.updateAllBusinessesBasicInfo();
+    const updatedBusinesses = await updateAllBusinessesBasicInfo();
     response.json(updatedBusinesses);
   } catch (error) {
     response.status(400).json(`Error updating all basic info ${error}`);
@@ -90,7 +90,7 @@ const updateAllBasicInfo = async (request, response) => {
 
 const deleteAll = async (request, response) => {
   try {
-    const result = await YelpBusinessService.deleteAllBusinesses();
+    const result = await deleteAllBusinesses();
     response.json(result);
   } catch (error) {
     response.status(400).json(`Error deleting all businesses ${error}`);
@@ -149,4 +149,4 @@ const YelpBusinessController = async (request, response) => {
   }
 }
 
-module.exports = YelpBusinessController;
+export default YelpBusinessController;
