@@ -4,6 +4,8 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const app = express();
 const path = require('path');
+const https = require('https');
+const fs = require('fs');
 
 const yelpParsedCollectionsRouter = require('./routes/yelp-parsed-collections');
 const yelpCollectionRouter = require('./routes/yelp-collection');
@@ -11,6 +13,7 @@ const yelpBusinessRouter = require('./routes/yelp-business');
 const yelpRouter = require('./routes/yelp.router');
 const googleRouter = require('./routes/google.router');
 const geolocationRouter = require('./routes/geolocation.router');
+const aiSearchRouter = require('./routes/ai-search.router');
 
 const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
@@ -25,6 +28,7 @@ app.use('/v1/', yelpBusinessRouter);
 app.use('/v1/', yelpRouter);
 app.use('/v1/', googleRouter);
 app.use('/v1/', geolocationRouter);
+app.use('/v1/', aiSearchRouter);
 
 const uri = process.env.ATLAS_URI;
 mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
@@ -40,9 +44,23 @@ if (process.env.NODE_ENV == 'production') {
   })
 }
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+console.log(process.env.NODE_ENV)
+
+if (process.env.NODE_ENV == 'development') {
+  const options = {
+    key: fs.readFileSync('certificates/localhost-key.pem'),
+    cert: fs.readFileSync('certificates/localhost.pem')
+  };
+
+  https.createServer(options, app).listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+} else {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
 
 // const revision = require('child_process')
 //   .execSync('git rev-parse HEAD')
