@@ -1,6 +1,6 @@
-import { findOneAndUpdate } from '../models/yelp-business.model';
+const { findOneAndUpdate } = require('../models/yelp-business.model');
 import axios from 'axios';
-import { getYelpBusinessInfo, updateBusinessByAlias, updatedSavedBusiness, getAllBusinesses, getBusinessByAlias, updateAllBusinesses, updateIncompleteBusinesses, updateAllBusinessesBasicInfo, deleteAllBusinesses } from '../services/yelp-business.service';
+const { getYelpBusinessInfo, updateBusinessByAlias, updatedSavedBusiness, getAllBusinesses, getBusinessByAlias, updateAllBusinesses, updateIncompleteBusinesses, updateAllBusinessesBasicInfo, deleteAllBusinesses } = require('../services/yelp-business.service');
 import Bottleneck from 'bottleneck';
 import { request } from 'express';
 

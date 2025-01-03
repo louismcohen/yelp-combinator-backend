@@ -4,7 +4,7 @@ const {
   populateBasicBusinessInfo,
   updateBusinessByAlias,
   updateBusinessBasicInfo,
-} = require('./yelp-business.service').default;
+} = require('./yelp-business.service');
 const jsdom = require('jsdom');
 const axios = require('axios');
 const {yelpAxiosOptions, YELP_RENDERED_ITEMS_URI, YELP_COLLECTION_URI} = require('../config/yelp-connection.config');

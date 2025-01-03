@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { Location, SearchResponse, Viewport } from '../routes/ai-search.router';
-import YelpBusiness, { Business } from '../models/yelp-business.model';
+import { Business } from '../models/yelp-business.model';
+const YelpBusiness = require('../models/yelp-business.model').default;
 import { FilterQuery } from 'mongoose';
 import { search } from '../routes/yelp-parsed-collections';
 

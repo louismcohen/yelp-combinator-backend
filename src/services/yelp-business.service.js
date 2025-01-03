@@ -1,13 +1,13 @@
-import { findOneAndUpdate, find, findOne, deleteMany } from '../models/yelp-business.model';
-import axios from 'axios';
-import { yelpAxiosOptions, YELP_BIZ_API_URI } from '../config/yelp-connection.config';
-import Bottleneck from 'bottleneck';
-import { find as _find } from '../models/yelp-collection.model';
-import GoogleTimeZoneController from '../controllers/google-timezone.controller';
-import { getTimeZoneByCoordinates } from '../services/geolocation.service';
-import _ from 'lodash';
+const YelpBusiness = require('../models/yelp-business.model');
+const axios = require('axios');
+const {yelpAxiosOptions, YELP_BIZ_API_URI} = require('../config/yelp-connection.config');
+const Bottleneck = require('bottleneck');
+const YelpCollection = require('../models/yelp-collection.model');
+const GoogleTimeZoneController = require('../controllers/google-timezone.controller');
+const GeolocationService = require('../services/geolocation.service');
+const _ = require('lodash');
 
-import { captureException } from "@sentry/node";
+const Sentry = require("@sentry/node");
 
 const limiter = new Bottleneck({
   maxConcurrent: 5,
@@ -19,7 +19,7 @@ const getYelpBusinessInfo = async (alias) => {
     const info = await axios(`${YELP_BIZ_API_URI}${encodeURI(alias)}`, yelpAxiosOptions);
     return info.data;
   } catch (error) {
-    captureException(error);
+    Sentry.captureException(error);
     return error.response.data;
   }
 }
@@ -57,17 +57,17 @@ const applyAddedIndexToCollections = (collections) => {
 
 const updateBusinessById = async (id) => {
   const data = await limiter.schedule(() => getYelpBusinessInfo(id));
-  const timeZoneInfo = getTimeZoneByCoordinates(data.coordinates.latitude, data.coordinates.longitude);
+  const timeZoneInfo = GeolocationService.getTimeZoneByCoordinates(data.coordinates.latitude, data.coordinates.longitude);
   console.log({timeZoneInfo});
   data.location.timezone = timeZoneInfo.timezone;
 
-  const updatedBusiness = await findOneAndUpdate(
+  const updatedBusiness = await YelpBusiness.findOneAndUpdate(
     {id: id},
     data,
     {new: true, upsert: true},
     (error, result) => {
       if (error) {
-        captureException(error);
+        Sentry.captureException(error);
         console.log('Error: ', error);
       } else {
         console.log(`Successfully updated ${result.addedIndex}: ${data.name} (${data.alias})`);
@@ -80,13 +80,13 @@ const updateBusinessById = async (id) => {
 }
 
 const updatedSavedBusiness = async (data) => {
-  const updatedBusiness = await findOneAndUpdate(
+  const updatedBusiness = await YelpBusiness.findOneAndUpdate(
     {alias: data.alias},
     data,
     {new: true, upsert: true},
     (error, result) => {
       if (error) {
-        captureException(error);
+        Sentry.captureException(error);
         console.log('Error: ', error);
       } else {
         console.log(`Successfully updated ${result.addedIndex}: ${data.name} (${data.alias})`);
@@ -100,17 +100,17 @@ const updatedSavedBusiness = async (data) => {
 
 const updateBusinessByAlias = async (alias) => {
   const data = await limiter.schedule(() => getYelpBusinessInfo(alias));
-  const timeZoneInfo = await getTimeZoneByCoordinates(data.coordinates.latitude, data.coordinates.longitude);
+  const timeZoneInfo = await GeolocationService.getTimeZoneByCoordinates(data.coordinates.latitude, data.coordinates.longitude);
   data.location.timezone = timeZoneInfo.timezone;
 
   if (!data.error) {
-    const updatedBusiness = await findOneAndUpdate(
+    const updatedBusiness = await YelpBusiness.findOneAndUpdate(
       {alias: alias},
       data,
       {new: true, upsert: true},
       (error, result) => {
         if (error) {
-          captureException(error);
+          Sentry.captureException(error);
           console.log('Error: ', error);
         } else {
           console.log(`Successfully updated ${result.addedIndex}: ${data.name} (${data.alias})`);
@@ -134,17 +134,17 @@ const updateBusiness = async (business) => {
   
   const data = await limiter.schedule(() => getYelpBusinessInfo(business.alias));
   console.log({data});
-  const timeZoneInfo = await getTimeZoneByCoordinates(data.coordinates.latitude, data.coordinates.longitude);
+  const timeZoneInfo = await GeolocationService.getTimeZoneByCoordinates(data.coordinates.latitude, data.coordinates.longitude);
   data.location.timezone = timeZoneInfo.timezone;
 
   if (!data.error) {
-    const updatedBusiness = await findOneAndUpdate(
+    const updatedBusiness = await YelpBusiness.findOneAndUpdate(
       {alias: business.alias},
       {...data, ...business},
       {new: true, upsert: true},
       (error, result) => {
         if (error) {
-          captureException(error);
+          Sentry.captureException(error);
           console.log('Error: ', error);
         } else {
           console.log(`Successfully updated ${result.addedIndex}: ${data.name} (${data.alias})`);
@@ -180,7 +180,7 @@ const checkAndUpdateIncompleteBusinesses = async (collections) => {
 
 const updateAllBusinesses = async () => {
   try {
-    const businesses = await find();
+    const businesses = await YelpBusiness.find();
     const updatedBusinesses = Promise.all(
       businesses.map(async business => {
         const updated = await updateBusinessByAlias(business.alias);
@@ -193,14 +193,14 @@ const updateAllBusinesses = async () => {
     )
     return updatedBusinesses;
   } catch {
-    captureException(error);
+    Sentry.captureException(error);
     return {error: error};
   }
 }
 
 const updateBusinessBasicInfo = async (business) => {
   try {
-    const updatedBusiness = await findOneAndUpdate(
+    const updatedBusiness = await YelpBusiness.findOneAndUpdate(
       {alias: business.alias},
       {
         alias: business.alias,
@@ -211,7 +211,7 @@ const updateBusinessBasicInfo = async (business) => {
       {new: true, upsert: true},
       (error, result) => {
         if (error) {
-          captureException(error);
+          Sentry.captureException(error);
           console.log(`Error updating basic business info for ${business.alias}: `, error);
         } else {
           console.log(`Updated basic info for ${business.alias}: addedIndex ${business.addedIndex}`);
@@ -222,14 +222,14 @@ const updateBusinessBasicInfo = async (business) => {
 
     return updatedBusiness;
   } catch (error) {
-    captureException(error);
+    Sentry.captureException(error);
     return {error: error};
   }
 }
 
 const updateAllBusinessesBasicInfo = async () => {
   try {
-    const collections = await _find();
+    const collections = await YelpCollection.find();
     const collectionsObject = collections.map(collection => collection.toObject());
     const updatedCollections = applyAddedIndexToCollections(collectionsObject);
     const businesses = updatedCollections.map(collection => collection.businesses).reduce((a, b) => a.concat(b));
@@ -242,14 +242,14 @@ const updateAllBusinessesBasicInfo = async () => {
 
     return updatedBusinesses;
   } catch (error) {
-    captureException(error);
+    Sentry.captureException(error);
     return error;
   }
 }
 
 const updateIncompleteBusinesses = async () => {
   try {
-    const businesses = await find();
+    const businesses = await YelpBusiness.find();
     const incomplete = businesses.filter(business => !business.name);
     const updatedBusinesses = Promise.all(
       incomplete.map(async business => {
@@ -262,38 +262,38 @@ const updateIncompleteBusinesses = async () => {
     )
     return updatedBusinesses;
   } catch {
-    captureException(error);
+    Sentry.captureException(error);
     return {error: error};
   }
 }
 
 const getAllBusinesses = async () => {
   try {
-    const businesses = await find();
+    const businesses = await YelpBusiness.find();
     return businesses;
   } catch (error) {
-    captureException(error);
+    Sentry.captureException(error);
     return {error: error};
   }
 }
 
 const getBusinessByAlias = async (alias) => {
   try {
-    const business = findOne({alias});
+    const business = YelpBusiness.findOne({alias});
     return business;
   } catch {
-    captureException(error);
+    Sentry.captureException(error);
     return {error: error};
   }
 }
 
 const deleteAllBusinesses = async () => {
   try {
-    const result = await deleteMany({});
+    const result = await YelpBusiness.deleteMany({});
     console.log(`Deleted all businesses (${result.deletedCount})`);
     return result;
   } catch (error) {
-    captureException(error);
+    Sentry.captureException(error);
     return {error: error};
   }
 }
@@ -315,4 +315,4 @@ const YelpBusinessService =  {
   deleteAllBusinesses,
 }
 
-export default YelpBusinessService;
+module.exports = YelpBusinessService;

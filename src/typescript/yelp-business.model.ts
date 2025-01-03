@@ -141,4 +141,4 @@ const yelpBusinessSchema = new mongoose.Schema<Business>(
 
 const YelpBusiness = mongoose.model('YelpBusiness', yelpBusinessSchema);
 
-export default YelpBusiness;
+module.exports = YelpBusiness;
