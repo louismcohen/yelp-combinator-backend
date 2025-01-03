@@ -298,6 +298,29 @@ const deleteAllBusinesses = async () => {
   }
 }
 
+const getUniqueCategories = async () => {
+  const uniqueCategories = await YelpBusiness.aggregate([
+    { 
+      $unwind: "$categories" // Unwind the 'categories' array to process each item individually 
+    },
+    { 
+      $group: { 
+        _id: "$categories.alias", // Group by 'alias' to get unique values
+        title: { $first: "$categories.title" } // Optionally include the title for each alias
+      } 
+    },
+    { 
+      $project: { 
+        alias: "$_id", // Rename '_id' to 'alias'
+        _id: 0, // Exclude the default '_id' field
+        title: 1
+      }
+    }
+  ]);
+
+  return uniqueCategories;
+}
+
 const YelpBusinessService =  {
   getAllBusinesses,
   getBusinessByAlias,
@@ -313,6 +336,7 @@ const YelpBusinessService =  {
   checkAndUpdateIncompleteBusinesses,
   populateBasicBusinessInfo,
   deleteAllBusinesses,
+  getUniqueCategories,
 }
 
 module.exports = YelpBusinessService;
