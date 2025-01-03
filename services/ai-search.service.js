@@ -1,5 +1,6 @@
 const Anthropic = require('@anthropic-ai/sdk');
 const YelpBusiness = require('../models/yelp-business.model');
+const { getUniqueCategories } = require('./yelp-business.service');
 
 const processSearch = async (
   query,
@@ -37,11 +38,13 @@ const processNaturalLanguageQuery = async (
     apiKey: process.env.ANTHROPIC_API_KEY,
   });
 
+  const uniqueCategories = await getUniqueCategories();
+
   const systemPrompt = `
     You are helping search a database of Yelp bookmarks. Return a search configuration object with these possible fields:
     {
       textSearch?: string[];     // For searching name, notes, and categories. A note might have information about certain menu items or cuisines at the restaurant, so if a term in the query isn't obviously a name or category, it should be a note. Separate each potential query into its own string. 
-      categories?: string[];     // Specific category filters, namely the type of business it is (e.g. "coffee shop, bar") or cuisine it might have (e.g. "Italian", "Mexican", "Chinese", etc.). The query might be in the plural such as "bars", but the category is in the singular.
+      categories?: string[];     // Specific category filters, namely the type of business it is (e.g. "coffee, bar") or cuisine it might have (e.g. "Italian", "Mexican", "Chinese", etc.). The query might be in the plural such as "bars", but the category is in the singular.
       visited?: boolean;         // Filter by visited status
       isClaimed?: boolean;       // Filter by claimed status
       shouldCheckHours?: boolean; // Indicates if results need to be filtered by open status
@@ -53,6 +56,8 @@ const processNaturalLanguageQuery = async (
     }
 
     Note about text vs. categories: "Restaurant" itself is not a category should never be entered as a category. For example "thai restaurant" should yield "thai" as a category, and the word "restaurant" can be discarded.
+
+    For the categories field, match the query with the following categories: ${uniqueCategories.map((category) => category.alias).join(', ')}.
     
     ${
       userLocation
