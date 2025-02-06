@@ -15,8 +15,8 @@ const googleRouter = require('./routes/google.router');
 const geolocationRouter = require('./routes/geolocation.router');
 const aiSearchRouter = require('./routes/ai-search.router');
 
-const Sentry = require("@sentry/node");
-const Tracing = require("@sentry/tracing");
+const Sentry = require('@sentry/node');
+const Tracing = require('@sentry/tracing');
 
 const PORT = process.env.PORT || 3001;
 
@@ -31,25 +31,18 @@ app.use('/v1/', geolocationRouter);
 app.use('/v1/', aiSearchRouter);
 
 const uri = process.env.ATLAS_URI;
-mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 const connection = mongoose.connection;
 connection.once('open', () => {
   console.log('MongoDB database connection established successfully');
 });
 
-if (process.env.NODE_ENV == 'production') {
-  app.use(express.static(path.join(__dirname, 'frontend', 'build')));
-  app.get('*', (request, response) => {
-    response.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
-  })
-}
-
-console.log(process.env.NODE_ENV)
+console.log(process.env.NODE_ENV);
 
 if (process.env.NODE_ENV == 'development') {
   const options = {
     key: fs.readFileSync('certificates/localhost-key.pem'),
-    cert: fs.readFileSync('certificates/localhost.pem')
+    cert: fs.readFileSync('certificates/localhost.pem'),
   };
 
   https.createServer(options, app).listen(PORT, () => {
@@ -61,13 +54,12 @@ if (process.env.NODE_ENV == 'development') {
   });
 }
 
-
 // const revision = require('child_process')
 //   .execSync('git rev-parse HEAD')
 //   .toString().trim()
 
 Sentry.init({
-  dsn: "https://b8b530bf641b4634a487354b1b824fb4@o1208538.ingest.sentry.io/6341791",
+  dsn: 'https://b8b530bf641b4634a487354b1b824fb4@o1208538.ingest.sentry.io/6341791',
   environment: 'production',
   release: 'yelp-combinator@' + process.env.HEROKU_RELEASE_VERSION,
   // Set tracesSampleRate to 1.0 to capture 100%
@@ -77,10 +69,9 @@ Sentry.init({
 });
 
 const transaction = Sentry.startTransaction({
-  op: "test",
-  name: "My First Test Transaction",
+  op: 'test',
+  name: 'My First Test Transaction',
 });
-
 
 // app.get('/yelp-parsed-collections/scrape/g6DLKiR2ReMs-N5hN6zDwg', (request, response) => {
 //   console.log('app response: ', response);
